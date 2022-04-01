@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { MoviesGrid } from "../components/MoviesGrid";
+import { Spinner } from "../components/Spinner";
+import { useQuery } from "../hooks/useQuery";
 import { get } from "../utils/httpClient";
 import movie from "./movie.json"
 import styles from "./MovieDetails.module.css"
@@ -8,13 +10,20 @@ import styles from "./MovieDetails.module.css"
 export function MovieDetails() {
 
     const {movieId} = useParams();
+    const [isLoading, setIsLoading] = useState(true);
     const [movie, setMovie] = useState(null);
 
     useEffect( ()=>{
-        get("/movie/" + movieId).then(data=>{
+        setIsLoading(true);
+        get("/movie/" + movieId).then(data=>{            
             setMovie(data)
+            setIsLoading(false);
         })
     },[movieId])
+
+    if(isLoading){
+        return <Spinner/>;
+    }
 
     if(!movie){return null}
 
